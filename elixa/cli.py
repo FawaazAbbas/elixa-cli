@@ -1000,83 +1000,110 @@ def _gradient_line(text: str) -> "Text":  # noqa: F821
     return out
 
 
-def _section(label: str, note: str = "") -> None:
+def _track(s: str) -> str:
+    """Audiowide-style tracked-out caps — spaces between each letter."""
+    return " ".join(s.upper())
+
+
+def _rule(num: str, title: str, note: str = "") -> None:
+    """Full-width ━ rule with an embedded section label (HUD style)."""
+    from rich.rule import Rule
     from rich.text import Text
-    t = Text("  ")
-    t.append("▸ ", style=f"bold {PRIMARY}")
-    t.append(label, style="bold")
+
+    label = Text("  ")
+    label.append(num, style=f"bold {ACCENT}")
+    label.append("   ")
+    label.append(_track(title), style=f"bold {PRIMARY}")
     if note:
-        t.append("  " + note, style=MUTED)
-    console.print(t)
-    console.print()
+        label.append("   ·   ", style=MUTED)
+        label.append(note, style=f"italic {MUTED}")
+    label.append("  ")
+    console.print(Rule(title=label, align="left", style=PRIMARY, characters="━"))
 
 
 def _print_branded_help() -> None:
-    """The hero moment: our own help screen for `elixa` / `elixa --help`."""
+    """Full-bleed, HUD-style help for `elixa` / `elixa --help`."""
+    from rich.rule import Rule
     from rich.text import Text
 
     c = console
+    width = c.size.width
+
     c.print()
 
-    # ── Logo ────────────────────────────────────────────────────────
+    # ── Wordmark (gradient half-block logo) ─────────────────────────
     for row in _LOGO:
         line = Text("  ")
         line.append_text(_gradient_line(row))
         c.print(line)
     c.print()
 
-    # ── Tagline ─────────────────────────────────────────────────────
-    c.print(Text("  structured product search for ai agents", style="bold"))
+    # ── Tagline: tracked display caps + cyan accent ────────────────
+    tagline = Text("  ")
+    tagline.append(_track("STRUCTURED PRODUCT SEARCH"), style=f"bold {PRIMARY}")
+    tagline.append("   //   ", style=MUTED)
+    tagline.append(_track("FOR AI AGENTS"), style=f"bold {ACCENT}")
+    c.print(tagline)
+
     meta = Text("  v")
-    meta.append(__version__, style=f"{ACCENT}")
-    meta.append("  ·  one api  ·  every merchant  ·  56 fields  ·  free forever", style=MUTED)
+    meta.append(__version__, style=f"bold {PRIMARY}")
+    meta.append(
+        "   ·   one api   ·   every merchant   ·   56 fields   ·   free forever",
+        style=MUTED,
+    )
     c.print(meta)
     c.print()
-    c.print()
 
-    # ── Usage ───────────────────────────────────────────────────────
-    _section("usage")
-    usage = Text("    elixa ")
+    # ── 01  USAGE ───────────────────────────────────────────────────
+    _rule("01", "usage")
+    c.print()
+    usage = Text("      ")
+    usage.append("$ ", style=f"bold {SUCCESS}")
+    usage.append("elixa ", style=f"bold {ACCENT}")
     usage.append("[OPTIONS] ", style=MUTED)
-    usage.append("COMMAND ", style=f"bold {ACCENT}")
+    usage.append("COMMAND ", style=f"bold {PRIMARY}")
     usage.append("[ARGS]...", style=MUTED)
     c.print(usage)
     c.print()
-    c.print()
 
-    # ── Command panels ──────────────────────────────────────────────
-    for group, rows in _TOP_COMMANDS.items():
-        note = "(requires login)" if group == "merchant" else ""
-        _section(group, note)
+    # ── 02 / 03 / 04  Command groups ────────────────────────────────
+    for idx, (group, rows) in enumerate(_TOP_COMMANDS.items(), start=2):
+        note = "requires login" if group == "merchant" else ""
+        _rule(f"0{idx}", group, note)
+        c.print()
         for cmd, desc in rows:
-            line = Text("    ")
-            line.append(cmd.ljust(12), style=f"bold {ACCENT}")
+            line = Text("      ")
+            line.append(cmd.ljust(14), style=f"bold {ACCENT}")
             line.append(desc)
             c.print(line)
         c.print()
-        c.print()
 
-    # ── Global options ──────────────────────────────────────────────
-    _section("options")
+    # ── 05  OPTIONS ─────────────────────────────────────────────────
+    _rule("05", "options")
+    c.print()
     for flag, short, desc in _TOP_OPTIONS:
-        line = Text("    ")
+        line = Text("      ")
         line.append(flag.ljust(12), style=f"bold {ACCENT}")
-        line.append(short.ljust(4), style=ACCENT)
-        line.append(desc)
+        line.append(short.ljust(5), style=ACCENT)
+        line.append(desc, style=MUTED if "env" in desc.lower() else "default")
         c.print(line)
     c.print()
-    c.print()
 
-    # ── Footer ──────────────────────────────────────────────────────
-    c.print(Text(
-        "  any command accepts --help to see its own flags",
-        style=MUTED,
-    ))
-    tip = Text("  new? try ")
-    tip.stylize(MUTED)
-    tip.append('elixa search "wireless headphones"', style=f"bold {PRIMARY}")
-    c.print(tip)
-    c.print()
+    # ── Status footer ───────────────────────────────────────────────
+    c.print(Rule(style=PRIMARY, characters="━"))
+    foot = Text("  ")
+    foot.append("●", style=f"bold {SUCCESS}")
+    foot.append(" READY", style=f"bold {SUCCESS}")
+    foot.append("   ·   ", style=MUTED)
+    foot.append("every command accepts ", style=MUTED)
+    foot.append("--help", style=f"bold {ACCENT}")
+    foot.append("   ·   ", style=MUTED)
+    foot.append("new? try  ", style=MUTED)
+    foot.append('elixa search "wireless headphones"', style=f"bold {PRIMARY}")
+    c.print(foot)
+    c.print(Rule(style=PRIMARY, characters="━"))
+    # Swallow unused locals used only for future width-aware tweaks.
+    _ = width
 
 
 # ══════════════════════════════════════════════════════════════════

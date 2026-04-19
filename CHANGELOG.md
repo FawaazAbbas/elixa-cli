@@ -4,6 +4,22 @@ All notable changes to the `elixa` CLI are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.4] — 2026-04-19
+
+### Changed
+- Help screen redesigned as a full-bleed HUD inspired by tech-forward,
+  Audiowide-style interfaces. Section panels replaced with full-width
+  `━` rules that carry their own label: numbered (`01`, `02`, …),
+  tracked-out display caps (`U S A G E`, `P U B L I C`,
+  `A U T H E N T I C A T I O N`, `M E R C H A N T`, `O P T I O N S`),
+  and muted italic notes (e.g. `requires login`).
+- Tagline promoted to display caps: **S T R U C T U R E D
+  P R O D U C T  S E A R C H  //  F O R  A I  A G E N T S**.
+- Usage line now reads like a shell prompt: `$ elixa [OPTIONS]
+  COMMAND [ARGS]...` with a green `$`.
+- Added a status footer bar between two `━` rules: `● READY · every
+  command accepts --help · new? try elixa search "…"`.
+
 ## [0.2.3] — 2026-04-19
 
 ### Fixed
