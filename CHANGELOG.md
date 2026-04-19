@@ -4,6 +4,22 @@ All notable changes to the `elixa` CLI are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] — 2026-04-19
+
+### Changed
+- Fully custom `elixa` / `elixa --help` screen, rendered outside Typer.
+  Hero wordmark in a blue→violet gradient, tagline, usage line,
+  section markers (`▸ public`, `▸ authentication`, `▸ merchant`),
+  conversational command descriptions, and a "new? try…" footer.
+- Per-subcommand help still uses Typer + Rich, now with bolder
+  (`#3B82F6`) panel borders that match the main screen.
+
+### Added
+- `elixa.cli:main_entrypoint` — thin wrapper that intercepts bare
+  `elixa`, `elixa help`, `elixa -h`, and `elixa --help` to route them
+  to the branded renderer. All other invocations fall through to Typer
+  unchanged.
+
 ## [0.2.1] — 2026-04-19
 
 ### Changed

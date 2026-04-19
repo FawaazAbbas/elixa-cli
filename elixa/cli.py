@@ -67,8 +67,8 @@ _rich_utils.STYLE_OPTION_DEFAULT         = "dim"
 _rich_utils.STYLE_OPTION_ENVVAR          = "#D97706"
 _rich_utils.STYLE_REQUIRED_SHORT         = "#DC2626"
 _rich_utils.STYLE_REQUIRED_LONG          = "dim #DC2626"
-_rich_utils.STYLE_OPTIONS_PANEL_BORDER   = "#93C5FD"
-_rich_utils.STYLE_COMMANDS_PANEL_BORDER  = "#93C5FD"
+_rich_utils.STYLE_OPTIONS_PANEL_BORDER   = "#3B82F6"
+_rich_utils.STYLE_COMMANDS_PANEL_BORDER  = "#3B82F6"
 _rich_utils.STYLE_ERRORS_PANEL_BORDER    = "#DC2626"
 _rich_utils.STYLE_ERRORS_SUGGESTION      = "dim"
 _rich_utils.STYLE_HELPTEXT               = ""
@@ -918,8 +918,177 @@ def analytics_events(
 
 
 # ══════════════════════════════════════════════════════════════════
+# Branded top-level help screen
+# ══════════════════════════════════════════════════════════════════
+#
+# Typer's auto-generated help is fine for subcommands. For the front
+# door we render our own — ASCII wordmark, blue→violet gradient on
+# the logo, section markers, conversational copy. Feels like an
+# Elixa thing, not a Typer thing.
+#
+# Design choices worth knowing:
+#   • Logo uses half-block glyphs; renders the same across iTerm2,
+#     Terminal.app, Ghostty, Warp, Alacritty. No fancy font required.
+#   • Each letter gets a different hex to fake a gradient. Rich writes
+#     truecolor escapes; terminals that don't support it degrade to
+#     256-colour, still distinct.
+#   • Lowercase commands and copy — modern terminal idiom.
+
+
+_TOP_COMMANDS: dict[str, list[tuple[str, str]]] = {
+    "public": [
+        ("search",    "ask in plain English, get products back"),
+        ("product",   "fetch a single product — all 56 fields"),
+        ("merchants", "see who's indexed"),
+        ("schema",    "the full field map + scoring rules"),
+        ("docs",      "open the docs in your browser"),
+        ("health",    "ping the API"),
+        ("version",   "which elixa am i running?"),
+    ],
+    "authentication": [
+        ("login",     "sign in to push catalogs & see analytics"),
+        ("signup",    "create a merchant account in 30 seconds"),
+        ("logout",    "forget saved credentials"),
+        ("whoami",    "show the signed-in merchant"),
+    ],
+    "merchant": [
+        ("submit",    "push a product feed directly (.json or .csv)"),
+        ("products",  "list your own catalog"),
+        ("feeds",     "register & manage scheduled feed URLs"),
+        ("keys",      "create, list, and revoke API keys"),
+        ("domain",    "verify your merchant domain via DNS"),
+        ("analytics", "impressions, clicks, top queries, events"),
+    ],
+}
+
+_TOP_OPTIONS: list[tuple[str, str, str]] = [
+    ("--api-url",  "URL",  "override the api base URL  [env: ELIXA_API_URL]"),
+    ("--version",  "-V",   "print version and exit"),
+    ("--help",     "-h",   "show this screen"),
+]
+
+# Five-stop blue→violet gradient. One colour per column in the logo.
+_GRADIENT: list[str] = [
+    "#3B82F6",  # blue 500 (E)
+    "#5377F6",
+    "#6B6CF6",
+    "#7C66F6",  # mid
+    "#8361F6",
+    "#8B5CF6",  # violet 500 (A)
+]
+
+# Compact half-block wordmark — 2 rows, ~30 columns wide.
+_LOGO = [
+    "█▀▀ █   █ ▀▄▀ ▄▀█",
+    "█▄▄ █▄▄ █ █ █ █▀█",
+]
+
+
+def _gradient_line(text: str) -> "Text":  # noqa: F821
+    """Colour each column of `text` with the next gradient stop."""
+    from rich.text import Text
+    out = Text()
+    # Spread the gradient across the full line width.
+    cols = len(text)
+    stops = len(_GRADIENT)
+    for i, ch in enumerate(text):
+        hex_ = _GRADIENT[min(i * stops // max(cols, 1), stops - 1)]
+        out.append(ch, style=f"bold {hex_}")
+    return out
+
+
+def _section(label: str, note: str = "") -> None:
+    from rich.text import Text
+    t = Text("  ")
+    t.append("▸ ", style=f"bold {PRIMARY}")
+    t.append(label, style="bold")
+    if note:
+        t.append("  " + note, style=MUTED)
+    console.print(t)
+    console.print()
+
+
+def _print_branded_help() -> None:
+    """The hero moment: our own help screen for `elixa` / `elixa --help`."""
+    from rich.text import Text
+
+    c = console
+    c.print()
+
+    # ── Logo ────────────────────────────────────────────────────────
+    for row in _LOGO:
+        line = Text("  ")
+        line.append_text(_gradient_line(row))
+        c.print(line)
+    c.print()
+
+    # ── Tagline ─────────────────────────────────────────────────────
+    c.print(Text("  structured product search for ai agents", style="bold"))
+    meta = Text("  v")
+    meta.append(__version__, style=f"{ACCENT}")
+    meta.append("  ·  one api  ·  every merchant  ·  56 fields  ·  free forever", style=MUTED)
+    c.print(meta)
+    c.print()
+    c.print()
+
+    # ── Usage ───────────────────────────────────────────────────────
+    _section("usage")
+    usage = Text("    elixa ")
+    usage.append("[OPTIONS] ", style=MUTED)
+    usage.append("COMMAND ", style=f"bold {ACCENT}")
+    usage.append("[ARGS]...", style=MUTED)
+    c.print(usage)
+    c.print()
+    c.print()
+
+    # ── Command panels ──────────────────────────────────────────────
+    for group, rows in _TOP_COMMANDS.items():
+        note = "(requires login)" if group == "merchant" else ""
+        _section(group, note)
+        for cmd, desc in rows:
+            line = Text("    ")
+            line.append(cmd.ljust(12), style=f"bold {ACCENT}")
+            line.append(desc)
+            c.print(line)
+        c.print()
+        c.print()
+
+    # ── Global options ──────────────────────────────────────────────
+    _section("options")
+    for flag, short, desc in _TOP_OPTIONS:
+        line = Text("    ")
+        line.append(flag.ljust(12), style=f"bold {ACCENT}")
+        line.append(short.ljust(4), style=ACCENT)
+        line.append(desc)
+        c.print(line)
+    c.print()
+    c.print()
+
+    # ── Footer ──────────────────────────────────────────────────────
+    c.print(Text(
+        "  any command accepts --help to see its own flags",
+        style=MUTED,
+    ))
+    tip = Text("  new? try ")
+    tip.stylize(MUTED)
+    tip.append('elixa search "wireless headphones"', style=f"bold {PRIMARY}")
+    c.print(tip)
+    c.print()
+
+
+# ══════════════════════════════════════════════════════════════════
 # Entrypoint
 # ══════════════════════════════════════════════════════════════════
+# Thin wrapper that intercepts `elixa` and `elixa --help/-h` and
+# prints the branded screen. Everything else falls through to Typer.
+
+def main_entrypoint() -> None:
+    argv = sys.argv[1:]
+    if not argv or argv in (["--help"], ["-h"], ["help"]):
+        _print_branded_help()
+        raise SystemExit(0)
+    app()
+
 
 if __name__ == "__main__":
-    app()
+    main_entrypoint()

@@ -1,6 +1,6 @@
 [project]
 name = "elixa"
-version = "0.2.1"
+version = "0.2.2"
 description = "CLI for Elixa — the structured product search engine for AI agents."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -49,7 +49,7 @@ dependencies = [
 ]
 
 [project.scripts]
-elixa = "elixa.cli:app"
+elixa = "elixa.cli:main_entrypoint"
 
 [project.urls]
 Homepage      = "https://elixa.dev"
