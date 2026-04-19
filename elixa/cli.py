@@ -45,6 +45,41 @@ from pathlib import Path
 from typing import Any
 
 import typer
+from typer import rich_utils as _rich_utils
+
+# ══════════════════════════════════════════════════════════════════
+# Help-screen palette — synced with elixa/formatters.py + web tokens
+# so `elixa --help` looks like the rest of the CLI, not default Typer.
+# Must be set before the Typer app is constructed.
+# ══════════════════════════════════════════════════════════════════
+_rich_utils.STYLE_USAGE                  = "dim"
+_rich_utils.STYLE_USAGE_COMMAND          = "bold #3B82F6"
+_rich_utils.STYLE_OPTION                 = "bold #06B6D4"
+_rich_utils.STYLE_SWITCH                 = "bold #06B6D4"
+_rich_utils.STYLE_NEGATIVE_OPTION        = "bold #DC2626"
+_rich_utils.STYLE_NEGATIVE_SWITCH        = "bold #DC2626"
+_rich_utils.STYLE_METAVAR                = "#8B5CF6"
+_rich_utils.STYLE_METAVAR_SEPARATOR      = "dim"
+_rich_utils.STYLE_HEADER_TEXT            = "bold #3B82F6"
+_rich_utils.STYLE_FOOTER_TEXT            = "dim"
+_rich_utils.STYLE_OPTION_HELP            = ""
+_rich_utils.STYLE_OPTION_DEFAULT         = "dim"
+_rich_utils.STYLE_OPTION_ENVVAR          = "#D97706"
+_rich_utils.STYLE_REQUIRED_SHORT         = "#DC2626"
+_rich_utils.STYLE_REQUIRED_LONG          = "dim #DC2626"
+_rich_utils.STYLE_OPTIONS_PANEL_BORDER   = "#93C5FD"
+_rich_utils.STYLE_COMMANDS_PANEL_BORDER  = "#93C5FD"
+_rich_utils.STYLE_ERRORS_PANEL_BORDER    = "#DC2626"
+_rich_utils.STYLE_ERRORS_SUGGESTION      = "dim"
+_rich_utils.STYLE_HELPTEXT               = ""
+_rich_utils.STYLE_HELPTEXT_FIRST_LINE    = "bold"
+_rich_utils.STYLE_ABORTED                = "#DC2626"
+
+# Rich help-panel labels — group commands so the top-level help reads
+# like a deliberate product surface, not an alphabetised dump.
+_PANEL_PUBLIC   = "Public"
+_PANEL_AUTH     = "Authentication"
+_PANEL_MERCHANT = "Merchant"
 
 from elixa import __version__
 from elixa.client import ElixaAPIError, ElixaClient
@@ -175,35 +210,35 @@ feeds_app = typer.Typer(
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-app.add_typer(feeds_app, name="feeds")
+app.add_typer(feeds_app, name="feeds", rich_help_panel=_PANEL_MERCHANT)
 
 keys_app = typer.Typer(
     help="Create, list, and revoke API keys.",
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-app.add_typer(keys_app, name="keys")
+app.add_typer(keys_app, name="keys", rich_help_panel=_PANEL_MERCHANT)
 
 domain_app = typer.Typer(
     help="Verify ownership of your merchant domain.",
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-app.add_typer(domain_app, name="domain")
+app.add_typer(domain_app, name="domain", rich_help_panel=_PANEL_MERCHANT)
 
 analytics_app = typer.Typer(
     help="Impressions, clicks, top queries, events stream.",
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-app.add_typer(analytics_app, name="analytics")
+app.add_typer(analytics_app, name="analytics", rich_help_panel=_PANEL_MERCHANT)
 
 products_app = typer.Typer(
     help="Your own products (authed).",
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
-app.add_typer(products_app, name="products")
+app.add_typer(products_app, name="products", rich_help_panel=_PANEL_MERCHANT)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -287,13 +322,13 @@ def main(
 # Public: version, docs, health
 # ══════════════════════════════════════════════════════════════════
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def version():
     """Show the CLI version."""
     typer.echo(f"elixa {__version__}")
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def docs():
     """Open the Elixa docs in your browser."""
     url = "https://elixa.dev/docs"
@@ -301,7 +336,7 @@ def docs():
     webbrowser.open(url)
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def health(
     format: OutputFormat = typer.Option(OutputFormat.auto, "--format", "-f"),
 ):
@@ -318,7 +353,7 @@ def health(
 # Public: search, product, merchants, schema
 # ══════════════════════════════════════════════════════════════════
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def search(
     query: str = typer.Argument(..., help="Natural-language query."),
     category: str = typer.Option(None, "--category", "-c"),
@@ -363,7 +398,7 @@ def search(
     _emit(data, fmt=format, table_printer=print_search_results)
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def product(
     elixa_id: str = typer.Argument(..., help="Elixa product ID (UUID)."),
     format: OutputFormat = typer.Option(OutputFormat.auto, "--format", "-f"),
@@ -377,7 +412,7 @@ def product(
     _emit(data, fmt=format, table_printer=print_product)
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def merchants(
     q: str = typer.Option(None, "--search", "-q", help="Substring match on name."),
     limit: int = typer.Option(20, "--limit", "-n", min=1, max=100),
@@ -393,7 +428,7 @@ def merchants(
     _emit(data, fmt=format, table_printer=print_merchants)
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_PUBLIC)
 def schema(
     format: OutputFormat = typer.Option(OutputFormat.auto, "--format", "-f"),
 ):
@@ -410,7 +445,7 @@ def schema(
 # Auth: login, signup, logout, whoami
 # ══════════════════════════════════════════════════════════════════
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_AUTH)
 def login(
     email: str = typer.Option(None, "--email", "-e", help="Merchant email."),
     password: str = typer.Option(None, "--password", "-p", hide_input=True),
@@ -452,7 +487,7 @@ def login(
     err_console.print(f"[{MUTED}]  credentials saved to {path}[/]")
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_AUTH)
 def signup(
     email: str = typer.Option(None, "--email", "-e"),
     password: str = typer.Option(None, "--password", "-p", hide_input=True),
@@ -495,7 +530,7 @@ def signup(
     )
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_AUTH)
 def logout():
     """Forget saved credentials."""
     removed = clear_credentials()
@@ -505,7 +540,7 @@ def logout():
         err_console.print(f"[{MUTED}]  no saved credentials.[/]")
 
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_AUTH)
 def whoami(
     format: OutputFormat = typer.Option(OutputFormat.auto, "--format", "-f"),
 ):
@@ -523,7 +558,7 @@ def whoami(
 # Merchant: submit
 # ══════════════════════════════════════════════════════════════════
 
-@app.command()
+@app.command(rich_help_panel=_PANEL_MERCHANT)
 def submit(
     file_path: Path = typer.Argument(..., exists=True, readable=True, help="Feed file (.json or .csv)."),
     merchant_name: str = typer.Option(None, "--merchant", "-m", help="Merchant name (defaults to your account)."),

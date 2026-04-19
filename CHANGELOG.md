@@ -4,6 +4,15 @@ All notable changes to the `elixa` CLI are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] — 2026-04-19
+
+### Changed
+- `elixa --help` now uses the branded palette (blue primary, cyan options,
+  violet metavars, amber env vars) instead of Typer's defaults.
+- Top-level commands are grouped into three panels — **Public**,
+  **Authentication**, **Merchant** — so the front door reads like a
+  deliberate product surface.
+
 ## [0.2.0] — 2026-04-19
 
 First public release.
