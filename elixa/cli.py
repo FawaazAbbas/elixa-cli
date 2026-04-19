@@ -977,10 +977,13 @@ _GRADIENT: list[str] = [
     "#8B5CF6",  # violet 500 (A)
 ]
 
-# Compact half-block wordmark — 2 rows, ~30 columns wide.
+# Half-block wordmark rendered from a 5-pixel-tall grid into 3 terminal
+# rows.  Each glyph has a real middle bar / crossbar so "E" reads as "E".
+# Width: 28 columns total (4+2+4+2+3+2+5+2+4).
 _LOGO = [
-    "█▀▀ █   █ ▀▄▀ ▄▀█",
-    "█▄▄ █▄▄ █ █ █ █▀█",
+    "█▀▀▀  █     ▀█▀  ▀▄ ▄▀  ▄▀▀▄",
+    "█▀▀   █      █    ▄▀▄   █▀▀█",
+    "▀▀▀▀  ▀▀▀▀  ▀▀▀  ▀   ▀  ▀  ▀",
 ]
 
 

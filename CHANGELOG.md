@@ -4,6 +4,14 @@ All notable changes to the `elixa` CLI are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] — 2026-04-19
+
+### Fixed
+- The `E` in the `ELIXA` wordmark now has a middle bar and reads as an
+  E instead of a C. Redrew all five glyphs against a true 5-pixel-tall
+  grid rendered across 3 terminal rows (was 2), so every letter has
+  the right crossbars.
+
 ## [0.2.2] — 2026-04-19
 
 ### Changed
