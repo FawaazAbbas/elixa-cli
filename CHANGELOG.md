@@ -4,6 +4,16 @@ All notable changes to the `elixa` CLI are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.5] — 2026-04-19
+
+### Changed
+- Default API URL moved from `https://api.elixa.dev` to
+  `https://api.elixa.app`. `ELIXA_API_URL` override still works
+  unchanged.
+- `elixa docs` now opens `https://search.elixa.app/docs`.
+- Homepage, documentation, and contact links in project metadata
+  updated to the `.app` domain.
+
 ## [0.2.4] — 2026-04-19
 
 ### Changed

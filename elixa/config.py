@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal
 
-DEFAULT_API_URL = "https://api.elixa.dev"
+DEFAULT_API_URL = "https://api.elixa.app"
 LOCAL_API_URL   = "http://localhost:8000"
 
 

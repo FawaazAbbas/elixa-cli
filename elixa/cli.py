@@ -306,7 +306,7 @@ def main(
     api_url: str = typer.Option(
         None, "--api-url",
         envvar="ELIXA_API_URL",
-        help="Override the API base URL. Default: https://api.elixa.dev",
+        help="Override the API base URL. Default: https://api.elixa.app",
     ),
     version: bool = typer.Option(
         None, "--version", "-V",
@@ -331,7 +331,7 @@ def version():
 @app.command(rich_help_panel=_PANEL_PUBLIC)
 def docs():
     """Open the Elixa docs in your browser."""
-    url = "https://elixa.dev/docs"
+    url = "https://search.elixa.app/docs"
     err_console.print(f"[{PRIMARY}]→[/] opening [bold]{url}[/]")
     webbrowser.open(url)
 

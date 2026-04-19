@@ -1,6 +1,6 @@
 [project]
 name = "elixa"
-version = "0.2.4"
+version = "0.2.5"
 description = "CLI for Elixa — the structured product search engine for AI agents."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -9,7 +9,7 @@ authors = [
     { name = "Fawaaz Abbas", email = "fawaazabbas2@gmail.com" },
 ]
 maintainers = [
-    { name = "Elixa", email = "hello@elixa.dev" },
+    { name = "Elixa", email = "hello@elixa.app" },
 ]
 keywords = [
     "search",
@@ -52,8 +52,8 @@ dependencies = [
 elixa = "elixa.cli:main_entrypoint"
 
 [project.urls]
-Homepage      = "https://elixa.dev"
-Documentation = "https://elixa.dev/docs"
+Homepage      = "https://search.elixa.app"
+Documentation = "https://search.elixa.app/docs"
 Source        = "https://github.com/FawaazAbbas/elixa-cli"
 Issues        = "https://github.com/FawaazAbbas/elixa-cli/issues"
 Changelog     = "https://github.com/FawaazAbbas/elixa-cli/blob/main/CHANGELOG.md"

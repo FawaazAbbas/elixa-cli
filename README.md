@@ -2,7 +2,7 @@
 
 > Structured product search for AI agents — from the terminal.
 
-`elixa` is the official CLI for [Elixa](https://elixa.dev), the product
+`elixa` is the official CLI for [Elixa](https://search.elixa.app), the product
 search engine built for machines. Every product is normalised into a strict
 56-field schema and ranked by relevancy + completeness. The CLI gives you
 search, catalog submission, feed management, analytics, and API key
@@ -78,7 +78,7 @@ Sign out with `elixa logout`. Verify who you are with `elixa whoami`.
 
 | Variable            | Default                     | Purpose                                      |
 |---------------------|-----------------------------|----------------------------------------------|
-| `ELIXA_API_URL`     | `https://api.elixa.dev`     | Override the API base URL (local dev / proxies). |
+| `ELIXA_API_URL`     | `https://api.elixa.app`     | Override the API base URL (local dev / proxies). |
 | `ELIXA_API_KEY`     | —                           | Bearer token (takes precedence over session). |
 | `XDG_CONFIG_HOME`   | `~/.config`                 | Where credentials are stored.                |
 
